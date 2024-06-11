@@ -1,0 +1,8 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+api_put:
+    path: /api/put
+    controller: 'App\Controller\ApiController::putRequest'
+    methods: ['PUT']

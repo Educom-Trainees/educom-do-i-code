@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1 {
+    font-weight: bold;
+}
+
+a {
+    text-decoration: underline;
+}
+
+.items-safe-center {
+    align-items: safe center;
+}
+
+.justify-safe-center {
+    justify-content: safe center;
+}
+
+.direction-rtl {
+    direction: rtl;
+}
+
+.direction-ltr {
+    direction: ltr;
+}

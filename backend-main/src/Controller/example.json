@@ -1,0 +1,60 @@
+{
+        "message": "Successful request",
+        "issues": [
+            {
+                "id": 1871104232,
+                "title": "4. Bootsnipp",
+                "number": 5,
+                "state": "closed",
+                "labels": [
+                    "week-35"
+                ],
+                "commitCount": 0
+            },
+            {
+                "id": 1871104207,
+                "title": "3. Layout-it",
+                "number": 4,
+                "state": "closed",
+                "labels": [
+                    "week-35"
+                ],
+                "commitCount": 1
+            },
+            {
+                "id": 1871104185,
+                "title": "2. Grid Exercise",
+                "number": 3,
+                "state": "closed",
+                "labels": [
+                    "week-35"
+                ],
+                "commitCount": 1
+            },
+            {
+                "id": 1871104160,
+                "title": "1. Grid Example",
+                "number": 2,
+                "state": "closed",
+                "labels": [
+                    "week-35"
+                ],
+                "commitCount": 2
+            },
+            {
+                "id": 1871104143,
+                "title": "Introductie",
+                "number": 1,
+                "state": "closed",
+                "labels": [
+                    "week-35"
+                ],
+                "commitCount": 1
+            }
+        ],
+        "name": "Stan Hillen",
+        "traineeID": 48620909,
+        "repoID": "educom-bootstrap-1693295632",
+        "repoName": "educom-bootstrap-1693295632",
+        "avatar_url": "https://avatars.githubusercontent.com/u/48620909?v=4"
+    }

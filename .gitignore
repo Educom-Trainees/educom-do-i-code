@@ -1,0 +1,81 @@
+# Cache and logs (Symfony2)
+/backend-main/app/cache/*
+/backend-main/app/logs/*
+!backend-main/app/cache/.gitkeep
+!backend-main/app/logs/.gitkeep
+
+# Email spool folder
+/backend-main/app/spool/*
+
+# Cache, session files and logs (Symfony3)
+/backend-main/var/cache/*
+/backend-main/var/logs/*
+/backend-main/var/sessions/*
+!backend-main/var/cache/.gitkeep
+!backend-main/var/logs/.gitkeep
+!backend-main/var/sessions/.gitkeep
+
+# Logs (Symfony4)
+/backend-main/var/log/*
+!backend-main/var/log/.gitkeep
+
+# Parameters
+/backend-main/app/config/parameters.yml
+/backend-main/app/config/parameters.ini
+
+# Managed by Composer
+/backend-main/app/bootstrap.php.cache
+/backend-main/var/bootstrap.php.cache
+/backend-main/bin/*
+!backend-main/bin/console
+!backend-main/bin/symfony_requirements
+/backend-main/vendor/
+
+# Assets and user uploads
+/backend-main/web/bundles/
+/backend-main/web/uploads/
+
+# PHPUnit
+/backend-main/app/phpunit.xml
+/backend-main/phpunit.xml
+
+# Build data
+/backend-main/build/
+
+# Composer PHAR
+/backend-main/composer.phar
+
+# Backup entities generated with doctrine:generate:entities command
+/backend-main/**/Entity/*~
+
+# Embedded web-server pid file
+/backend-main/.web-server-pid
+
+# dependencies
+/frontend-next-js/node_modules
+/frontend-next-js/.pnp
+/frontend-next-js/.pnp.js
+/frontend-next-js/.yarn/install-state.gz
+
+# testing
+/frontend-next-js/coverage
+
+# next.js
+/frontend-next-js/.next/
+/frontend-next-js/out/
+
+# production
+/frontend-next-js/build
+
+# misc
+/frontend-next-js/.DS_Store
+/frontend-next-js/*.pem
+
+# debug
+/frontend-next-js/npm-debug.log*
+/frontend-next-js/yarn-debug.log*
+/frontend-next-js/yarn-error.log*
+
+# local env files
+/frontend-next-js/.env*.local
+/frontend-next-js/next-env*
