@@ -20,7 +20,7 @@ If you plan to use the application outside of a local development environment, r
 To run the application locally, you will need to have [Node.js](https://e-learning.educom.nu/algemeen/nodejs) installed. You can initialize a Node.js application by running `npm install` in the `frontend-next-js` folder. 
 
 ### Create a `.env.local` file
-In order to run the application, you need to create a `.env.local` file in the root of the project containing environment variables. The following environment variables will need to be configured appropriately.
+In order to run the application, you need to create a `.env.local` file in the root of the frontend project (`./frontend-next-js`) containing environment variables. The following environment variables will need to be configured appropriately.
 
 ```
 GITHUB_CLIENT_ID='' # provided when creating an oauth app with github
