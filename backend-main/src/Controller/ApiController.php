@@ -40,7 +40,7 @@ class ApiController extends BaseController
         TraineeRepoRepository $traineeRepoRepository): JsonResponse
     {
         // password that we use to verify the api call
-        $password = "z3Q#!A4ZCqsids";
+        $password = $_ENV['BACKEND_PASSWORD'];
         $jsonData = json_decode($request->getContent(), true);
 
         // check if password is included: 
