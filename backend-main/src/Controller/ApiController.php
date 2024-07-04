@@ -65,17 +65,11 @@ class ApiController extends BaseController
             return new JsonResponse(['error' => 'Repo is not an educom repo'], 400);
         }
 
-
-        // API call to github for the account and commit data
-        // necessary for account name and number of commits 
-        // token is temporary 
-        // (since it is a personal token of mine but I hit the rate limit during testing so decided added this to raise the limit)
-        $token = "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";
+        // Currently no token because only the name is used which is public 
         $opts = [
             "http" => [
                 "method" => "GET",
-                "header" => "User-Agent: my-app/1.0\r\n" .
-                            "Authorization: Bearer $token\r\n"
+                "header" => "User-Agent: my-app/1.0\r\n" 
             ]
         ];
         

@@ -72,8 +72,12 @@ class IssuesRepository extends ServiceEntityRepository
                 $date = new \DateTime($issueData['created_at']);
 
                 $weekNumbers = $this->labelsToWeekNumbers($issueData['labels']);
-        
-                $startDate = $this->convertWeekToStartDate($weekNumbers, $yearChange, $date->format('Y'));
+                if (!empty($weekNumbers)) {
+                    $startDate = $this->convertWeekToStartDate($weekNumbers, $yearChange, $date->format('Y'));
+                }
+                else {
+                    $startDate = $date;
+                }
                 $issue->setStartDate($startDate);
         
                 if ($issueData['state'] == 'closed') 
