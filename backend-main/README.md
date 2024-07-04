@@ -17,7 +17,7 @@ composer install
 
 5) Create a database using the two commands below
 > [!WARNING]
-> If your root user has a password, place the password between the `:` and the `@` in the following line in `.env` or `.env.local` file before executing the commands
+> If your root user has a password, place the password between the `:` and the `@` in the following line in `.env.local` file before executing the commands
 > `DATABASE_URL="mysql://root:@127.0.0.1:3306/do_i_code_db?serverVersion=mariadb-10.4.28&charset=utf8mb4"`
 > 
 > Will not work with passwords containing URL escape characters, such as `/?:;@#=&`. In this case, you can use [URL encoded](https://www.w3schools.com/tags/ref_urlencode.ASP) passwords (i.e. change `?` to `%3F`). In this case, you may need to change the line in `config/packages/doctrine.yaml` from \
