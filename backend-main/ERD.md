@@ -23,11 +23,16 @@ erDiagram
     Issues {
         int    id              PK
         int    trainee_repo_id FK
-        date   start_date
-        date   end_date
-        int    number_of_commits  
         string description
         int    issue_number  
     }    
     Trainee_Repo ||--o{ Issues : Has
+
+    Commits {
+        int id PK
+        int issue_id FK
+        datetime start
+        string message
+    }
+    Issues ||--o{ Commits : Has
 ```
