@@ -18,6 +18,14 @@ sequenceDiagram
     Backend-->>-Frontend: 404
     Frontend->>+GitHub: GET /users/{username}/repos
     GitHub-->>-Frontend: 200 + list of github repo's
+    Loop for each trainee
+    opt New Trainee
+    Frontend->>+Backend: POST /api/trainees
+    Backend-->>-Frontend: 200 + trainee info
+    end
+    Frontend->>+Backend: PUT /api/trainees/{trainee_id}/repos
+    Backend-->>-Frontend: 200 + List of known repos for Trainee {trainee_id}
+    end
     Frontend->>+GitHub: GET /repos/{owner}/{repo}
     GitHub-->>-Frontend: 200 + details of github repo
     Frontend->>+GitHub: GET /repos/{owner}/{repo}/issues
