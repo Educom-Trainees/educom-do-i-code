@@ -2,14 +2,16 @@ Sequence diagram voor ophalen van issues (versie 1.0)
 ```mermaid
 sequenceDiagram
     alt Trainee
-    Frontend->>+Backend: GET /api/trainees?github_id=Trainee3
+    note right of Frontend: Each call below has HttpHeader:<br/>GITHUB_ID="Trainee3"
+    Frontend->>+Backend: GET /api/trainees
     Backend-->>-Frontend: 200 + array with trainee 3
     else Teacher
-    Frontend->>+Backend: GET /api/trainees?github_id=JeroenHeemskerk
+    note right of Frontend: Each call below has HttpHeader:<br/>GITHUB_ID="JeroenHeemskerk"
+    Frontend->>+Backend: GET /api/trainees
     Backend-->>-Frontend: 200 + array with trainees
     end
     Frontend->>+Backend: GET /api/repos
-    Backend-->>-Frontend: 200 + List of known repos
+    Backend-->>-Frontend: 200 + List of known repos (for this trainee)
     Frontend->>+Backend: GET /api/trainees/3/repos/1/
     Backend-->>-Frontend: 200 + trainee_repo inc. issues
     Frontend->>+Backend: GET /api/trainees/3/repos/4/
@@ -33,14 +35,20 @@ Sequence diagram voor ophalen van issues (versie 2.0)
 ```mermaid
 sequenceDiagram
     alt Trainee
-    Frontend->>+Backend: GET /api/trainees?github_id=Trainee3
+    note right of Frontend: Each call below has HttpHeader:<br/>GITHUB_ID="Trainee3"
+    Frontend->>+Backend: GET /api/trainees
     Backend-->>-Frontend: 200 + array with trainee 3
     else Teacher
-    Frontend->>+Backend: GET /api/trainees?github_id=JeroenHeemskerk
+    note right of Frontend: Each call below has HttpHeader:<br/>GITHUB_ID="JeroenHeemskerk"
+    Frontend->>+Backend: GET /api/trainees
     Backend-->>-Frontend: 200 + array with trainees
     end
     Frontend->>+Backend: GET /api/repos
-    Backend-->>-Frontend: 200 + List of known repos
+    opt Repolist older than 24 hours
+    Backend->>+GitHub: GET /users/{username}/repos
+    GitHub-->>-Backend: 200 + list of github repo's
+    end
+    Backend-->>-Frontend: 200 + List of known repos (for this trainee)
     Frontend->>+Backend: GET /api/trainees/3/repos/1/
     Backend-->>-Frontend: 200 + trainee_repo inc. issues
     Frontend->>+Backend: GET /api/trainees/3/repos/4/
