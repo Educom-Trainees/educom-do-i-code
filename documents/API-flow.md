@@ -9,7 +9,7 @@ sequenceDiagram
     Backend-->>-Frontend: 200 + array with trainees
     end
     Frontend->>+Backend: GET /api/repos
-    Backend-->>-Frontend: 200 + List of repos
+    Backend-->>-Frontend: 200 + List of known repos
     Frontend->>+Backend: GET /api/trainees/3/repos/1/
     Backend-->>-Frontend: 200 + trainee_repo inc. issues
     Frontend->>+Backend: GET /api/trainees/3/repos/4/
@@ -33,17 +33,21 @@ Sequence diagram voor ophalen van issues (versie 2.0)
 ```mermaid
 sequenceDiagram
     alt Trainee
-    Frontend->>+Backend: GET /api/trainees?github_id=xxxxx
+    Frontend->>+Backend: GET /api/trainees?github_id=Trainee3
     Backend-->>-Frontend: 200 + array with trainee 3
     else Teacher
-    Frontend->>+Backend: GET /api/trainees
+    Frontend->>+Backend: GET /api/trainees?github_id=JeroenHeemskerk
     Backend-->>-Frontend: 200 + array with trainees
     end
     Frontend->>+Backend: GET /api/repos
-    Backend-->>-Frontend: 200 + List of repos
+    Backend-->>-Frontend: 200 + List of known repos
     Frontend->>+Backend: GET /api/trainees/3/repos/1/
     Backend-->>-Frontend: 200 + trainee_repo inc. issues
     Frontend->>+Backend: GET /api/trainees/3/repos/4/
+    opt New Trainee
+    Backend-->>+GitHub: GET /users/{username}
+    GitHub-->>-Backend: 200 + owner data
+    end
     Backend->>+GitHub: GET /users/{username}/repos
     GitHub-->>-Backend: 200 + list of github repo's
     Backend->>+GitHub: GET /repos/{owner}/{repo}
@@ -53,4 +57,10 @@ sequenceDiagram
     Backend->>+GitHub: GET /repos/{owner}/{repo}/commits
     GitHub-->>-Backend: 200 + List of github commits
     Backend-->>-Frontend: 200 + trainee_repo inc. issues
+    opt Toevoegen onbekende repo
+    Frontend->>+Backend: GET /api/trainee/3/repos
+    Backend->>+GitHub: GET /users/{username}/repos
+    GitHub-->>-Backend: 200 + list of github repo's
+    Backend-->>-Frontend: 200 + List of repos done by Trainee3
+    end
 ```
