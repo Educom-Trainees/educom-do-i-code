@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\IssuesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,6 +34,14 @@ class Issues
 
     #[ORM\Column]
     private ?int $issueNumber = null;
+
+    #[ORM\OneToMany(mappedBy: 'has', targetEntity: Commits::class)]
+    private Collection $commits;
+
+    public function __construct()
+    {
+        $this->commits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,6 +116,36 @@ class Issues
     public function setIssueNumber(int $issueNumber): static
     {
         $this->issueNumber = $issueNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commits>
+     */
+    public function getCommits(): Collection
+    {
+        return $this->commits;
+    }
+
+    public function addCommit(Commits $commit): static
+    {
+        if (!$this->commits->contains($commit)) {
+            $this->commits->add($commit);
+            $commit->setHas($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommit(Commits $commit): static
+    {
+        if ($this->commits->removeElement($commit)) {
+            // set the owning side to null (unless already changed)
+            if ($commit->getHas() === $this) {
+                $commit->setHas(null);
+            }
+        }
 
         return $this;
     }

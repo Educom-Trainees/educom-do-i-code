@@ -9,7 +9,9 @@ use App\Repository\TraineeRepository;
 use App\Repository\IssuesRepository;
 use App\Repository\RepoRepository;
 use App\Repository\TraineeRepoRepository;
-
+use App\Entity\TraineeRepo;
+use App\Entity\Issues;
+use App\Repository\CommitsRepository;
 // need for testing
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -37,6 +39,7 @@ class ApiController extends BaseController
         TraineeRepository $traineeRepository, 
         RepoRepository $repoRepository, 
         IssuesRepository $issuesRepository, 
+        CommitsRepository $commitsRepository,
         TraineeRepoRepository $traineeRepoRepository): JsonResponse
     {
         // password that we use to verify the api call
@@ -48,16 +51,11 @@ class ApiController extends BaseController
         {
             return new JsonResponse(['Acces Denied' => 'Incorrect authorization'], 400);
         }
-        // decode the input json to retrieve necessary information
-        // retrieve the issues, repository and owner entities from the json
+        
         $issuesData = $jsonData['issues'];
         $repoData = $jsonData['repository'];
         $commitsData = $jsonData['commits'];
-
         $owner = $repoData['owner'];
-
-
-        // filter out non-educom repos from being added to the database
         $repoName = $repoData['name'] ?? null;
 
         if(!str_contains($repoName, "educom"))
@@ -65,7 +63,6 @@ class ApiController extends BaseController
             return new JsonResponse(['error' => 'Repo is not an educom repo'], 400);
         }
 
-        // Currently no token because only the name is used which is public 
         $opts = [
             "http" => [
                 "method" => "GET",
@@ -78,32 +75,33 @@ class ApiController extends BaseController
         $accountJson = file_get_contents($owner['url'], false, $context);
         $accountData = json_decode($accountJson, true);
 
-        // name of the logged is user is their actual name if it's entered in their account information else it's just their username
-        // since if no name is given in the account data the name variable = null 
         $name = $owner['login'];
-
         if ( $accountData['name'] != null){ $name = $accountData['name']; }
-        
-        // make an array of the issuenumber for each commit (0 means there was no indicated issue number) 
-        $commitIssueNumbers = [];
 
+        $commitIssueNumbers = [];
+        $commitCounts = [];
+
+        $commits = [];
         foreach($commitsData as $commitData){
             $commit = $commitData['commit'];
             $message = $commit['message'];
-            if($message == "Initial commit"){ continue; } // skips rene's automated initial commit message
+            $datetime = $commit["committer"]["date"];
+            if($message == "Initial commit"){ continue; }
             $issueNumber = 0;
 
             $pattern = '/#(\d+)/';
-
             if(preg_match($pattern, $message, $matches)) {
                 $issueNumber = intval($matches[1]);
             } 
 
             array_push($commitIssueNumbers, $issueNumber);
+            $commits[] = [
+                'message' => $message,
+                'date' => $datetime,
+                'issueNumber' => $issueNumber,
+            ];
         }
 
-        // check if this number is already in commitCounts if it is add 1 else make it 1 (count the commits per issue)
-        // commitcounts is an array of ["issuenumber" => amount of commits, ...]
         foreach($commitIssueNumbers as $issueNumber){
             if(isset($commitCounts[$issueNumber])) {
                 $commitCounts[$issueNumber]++;
@@ -113,7 +111,6 @@ class ApiController extends BaseController
         }
 
         $issues = [];
-        //using for loop to extract each single issue's data
         foreach ($issuesData as $issueData) {
             $issueID = $issueData['id'];
             $title = $issueData['title'];
@@ -123,18 +120,14 @@ class ApiController extends BaseController
             $created_at = $issueData['created_at'];
             $closed_at = $issueData['closed_at'];
             $labels = [];
-            //another loop to take all the labels separately 
+
             foreach ($labelsData as $label) {
                 array_push($labels, $label['name']);
             }
-            // look in commitcount if this issue has any commits
-            if (isset($commitCounts[$number])) {
-                $commitCount = $commitCounts[$number];
-            } else {
-                $commitCount = 0;
-            }
-            //new array for each separate issue with they representative data
-            $issuePruned = array(
+
+            $commitCount = $commitCounts[$number] ?? 0;
+            
+            $issuePruned = [
                 'id'=>$issueID,
                 'title'=>$title,
                 'number'=>$number,
@@ -143,19 +136,14 @@ class ApiController extends BaseController
                 'commitCount'=>$commitCount,
                 'created_at'=> $created_at,
                 'closed_at' => $closed_at
-            );
-            //add this issue to the main array
+            ];
             array_push($issues, $issuePruned);
-        };
-        // each entry in the array issues is a separate issue with only the necessary data
-        // including: title, number, state and an array of all the labels for that issue
+        }
 
-        
         $repoID = $repoData['id'] ?? null;
         $traineeID = $owner['id'] ?? null;
         $avatar_url = $owner['avatar_url'] ?? null;
 
-        // check if these variables are assigned and return error in case they aren't
         if(!$repoName || !$repoID || !$traineeID || !$name)
         {
             return new JsonResponse(['error' => 'Necessary variables could not be assigned'], 400);
@@ -165,14 +153,27 @@ class ApiController extends BaseController
         $repo = $repoRepository->saveRepo($repoName);
         $traineeRepo = $traineeRepoRepository->saveTraineeRepo($trainee, $repo);
         $issues = $issuesRepository->SaveIssues($traineeRepo, $issues);
-        
 
-        // remember to add status 204 when replying with a succesfull request 
-        // 204 does make the response empty so if frontend needs confirmation message just use the default
-        return new JsonResponse([
-            'message' => 'Successful request'
-            ], 204);        
+        // Fetch the mapping of issue numbers to issue IDs
+        $issueNumberToIdMap = $issuesRepository->fetchIssueNumberToIdMap($repoID);
+
+        // Prepare the commits with the correct issue IDs
+        foreach ($commits as &$commit) {
+            $issueNumber = $commit['issueNumber'];
+            if (isset($issueNumberToIdMap[$issueNumber])) {
+                $commit['issue_id'] = $issueNumberToIdMap[$issueNumber];
+            } else {
+                $commit['issue_id'] = null; // or handle this case as needed
+            }
+            unset($commit['issueNumber']); // remove issueNumber if no longer needed
+        }
+
+        // Save the commits
+        $commitsRepository->saveCommits($commits);
+        
+        return new JsonResponse(['message' => 'Successful request'], 204);
     }
 }
+
 
 ?>

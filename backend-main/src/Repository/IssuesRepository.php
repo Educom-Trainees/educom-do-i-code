@@ -137,6 +137,21 @@ class IssuesRepository extends ServiceEntityRepository
         return $issueEntities;
             
     }
+    public function fetchIssueNumberToIdMap($repoID)
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select('i.id', 'i.issueNumber')
+            ->where('i.trainee_repo = :repoID')
+            ->setParameter('repoID', $repoID)
+            ->getQuery();
+
+        $results = $qb->getArrayResult();
+        $map = [];
+        foreach ($results as $result) {
+            $map[$result['issue_number']] = $result['id'];
+        }
+        return $map;
+    }
 
     private function labelsToWeekNumbers(array $labels): ?array
     {
